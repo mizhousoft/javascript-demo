@@ -1,0 +1,13 @@
+package.json
+dist/
+.eslintignore
+.prettierignore
+.gitignore
+./public/
+./template/
+node_modules
+.vscode
+**/*.svg
+**/*.png
+src/assets/iconfont
+src/assets/imgs
