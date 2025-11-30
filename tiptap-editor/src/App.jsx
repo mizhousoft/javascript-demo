@@ -1,9 +1,7 @@
 import React from 'react';
 
-import RichEditor from './RichEditor';
-
 export default function App() {
-    const content = `
+	const content = `
 <h2>
   Hi there,
 </h2>
@@ -34,5 +32,5 @@ export default function App() {
 </blockquote>
 `;
 
-    return <RichEditor content={content} />;
+	return null;
 }
