@@ -1,5 +1,6 @@
-var webpack = require('webpack')
-var path = require("path")
+const path = require("path");
+const { rspack } = require('@rspack/core');
+const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
 
 module.exports = {
     mode: 'development',
@@ -14,7 +15,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, "./src")
+            '@': path.resolve(__dirname, "./src"),
         },
         extensions: [".js", ".jsx", ".json"],
         mainFiles: ["index"],
@@ -26,21 +27,24 @@ module.exports = {
                 test: /\.css$/,
                 use: [
                     {
-                        loader: 'style-loader' // creates style nodes from JS strings
+                        loader: 'style-loader'
                     },
                     {
                         loader: 'css-loader',
                         options: {
                             importLoaders: 1
                         }
-                    }
+                    },
+                    {
+                        loader: 'postcss-loader'
+                    },
                 ]
             },
             {
                 test: /\.less$/,
                 use: [
                     {
-                        loader: 'style-loader' // creates style nodes from JS strings
+                        loader: 'style-loader'
                     },
                     {
                         loader: 'css-loader',
@@ -63,16 +67,23 @@ module.exports = {
             },
             {
                 test: /\.(js|jsx)$/,
-                use: [{
-                    loader: 'babel-loader',
+                use: {
+                    loader: 'builtin:swc-loader',
                     options: {
-                        cacheDirectory: true
-                    }
-                }],
-                include: [
-                    path.resolve(__dirname, "src")
-                ],
-                exclude: /node_modules/
+                        jsc: {
+                            parser: {
+                                syntax: 'ecmascript',
+                                jsx: true,
+                            },
+                            transform: {
+                                react: {
+                                    runtime: 'automatic', // 启用自动 JSX 转换
+                                }
+                            },
+                        },
+                    },
+                },
+                type: 'javascript/auto',
             },
             {
                 test: /\.(gif|png|jpe?g|svg)$/i,
@@ -94,21 +105,18 @@ module.exports = {
         proxy: [
             {
                 context: ["**/*.action"],
-                //target: 'http://127.0.0.1:18080',
-                target: 'https://mall.mizhousoft.com',
-                secure: false,
+                target: 'http://127.0.0.1:18080',
+                //target: 'https://dev.mizhousoft.com',
+                //secure: false
                 changeOrigin: true,
             },
         ],
     },
     plugins: [
-        new webpack.DefinePlugin({
+        new rspack.DefinePlugin({
             ENV_TEST_ADMIN: JSON.stringify('admin'),
-            ENV_TEST_PASSWORD: JSON.stringify('Bmc@123456'),
+            ENV_TEST_PASSWORD: JSON.stringify('Bmc@1234567891'),
         }),
-        new webpack.DllReferencePlugin({
-            context: __dirname,
-            manifest: require('./manifest.json')
-        })
+        new ReactRefreshPlugin(),
     ]
-}
+}    
